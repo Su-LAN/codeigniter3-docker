@@ -1,0 +1,48 @@
+# data
+datastore:
+  build: ./datastore
+
+
+# nginx 1.11.5
+nginx: 
+  build: ./nginx
+  ports: 
+    - "80:80"
+  links: 
+    - php
+  volumes_from:
+    - datastore
+
+
+# php:7.1-fpm
+php: 
+  build: ./php
+  links:
+    - mariadb
+  volumes:
+    - ./php/:/var/www/html/
+
+
+# mariadb
+mariadb:
+  image: mariadb:10.1
+  environment:
+    MYSQL_ROOT_PASSWORD: password
+  expose:
+    - '3306'
+  volumes_from:
+    - datastore
+
+
+# phpmyadmin
+phpmyadmin:
+  image: phpmyadmin/phpmyadmin:4.6.4-1
+  ports:
+    - "8888:80"
+  links:
+    - mariadb
+  environment:
+    - PMA_ARBITRARY=1
+    - PMA_HOST=mariadb
+    - PMA_USER=root
+    - PMA_PASSWORD=password
