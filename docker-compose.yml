@@ -12,6 +12,8 @@ nginx:
     - php
   volumes_from:
     - datastore
+  volumes:
+    - ./php/:/var/www/html/
 
 
 # php:7.1-fpm
